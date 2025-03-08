@@ -60,6 +60,7 @@ public class UICountDown : View
         //倒计时结束
         SendEvent(Consts.E_CountDownComplete);
     }
+
     #endregion
 
     #region Unity回调

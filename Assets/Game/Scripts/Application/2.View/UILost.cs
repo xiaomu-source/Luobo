@@ -28,16 +28,22 @@ public class UILost : View
     public void Show()
     {
         this.gameObject.SetActive(true);
+
+        RoundModel rm = GetModel<RoundModel>();
+        UpdateRoundInfo(rm.RoundIndex + 1, rm.RoundTotal);
     }
+
     public void Hide()
     {
         this.gameObject.SetActive(false);
     }
+
     public void UpdateRoundInfo(int currentRound, int totalRound)
     {
         txtCurrent.text = currentRound.ToString("D2");
         txtTotal.text = totalRound.ToString();
     }
+
     #endregion
 
     #region Unity回调
@@ -54,7 +60,11 @@ public class UILost : View
     }
     public void OnRestartClick()
     {
+        GameModel gm = GetModel<GameModel>();
 
+        StartLevelArgs e = new StartLevelArgs();
+        e.LevelIndex = gm.PlayLevelIndex;
+        SendEvent(Consts.E_StartLevel, e);
     }
     #endregion
 

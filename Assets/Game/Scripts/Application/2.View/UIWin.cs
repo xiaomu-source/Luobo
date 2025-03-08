@@ -28,11 +28,16 @@ public class UIWin : View
     public void Show()
     {
         this.gameObject.SetActive(true);
+
+        RoundModel rm = GetModel<RoundModel>();
+        UpdateRoundInfo(rm.RoundIndex + 1, rm.RoundTotal);
     }
+
     public void Hide()
     {
         this.gameObject.SetActive(false);
     }
+
     public void UpdateRoundInfo(int currentRound, int totalRound)
     {
         txtCurrent.text = currentRound.ToString("D2");
@@ -52,13 +57,28 @@ public class UIWin : View
     {
         
     }
+
     public void OnRestartClick()
     {
+        GameModel gm = GetModel<GameModel>();
 
+        StartLevelArgs e = new StartLevelArgs() { LevelIndex = gm.PlayLevelIndex };
+        SendEvent(Consts.E_StartLevel, e);
     }
+
     public void OnContinueClick()
     {
+        GameModel gm = GetModel<GameModel>();
 
+        if (gm.PlayLevelIndex >= gm.LevelCount - 1)
+        {
+            Game.Instance.LoadScene(4);
+        }
+        else
+        {
+            StartLevelArgs e = new StartLevelArgs() { LevelIndex = gm.PlayLevelIndex + 1 };
+            SendEvent(Consts.E_StartLevel, e);
+        }
     }
     #endregion
 

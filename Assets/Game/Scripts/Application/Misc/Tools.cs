@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
+
 public class Tools 
 {
     //读取关卡列表
@@ -87,6 +88,7 @@ public class Tools
         sb.AppendLine("<Level>");
 
         sb.AppendLine(string.Format("<Name>{0}</Name>", level.Name));
+        sb.AppendLine(string.Format("<CardImage>{0}</CardImage>", level.CardImage));
         sb.AppendLine(string.Format("<Background>{0}</Background>", level.Background));
         sb.AppendLine(string.Format("<Road>{0}</Road>", level.Road));
         sb.AppendLine(string.Format("<InitScore>{0}</InitScore>", level.InitScore));
@@ -116,10 +118,21 @@ public class Tools
 
         string content = sb.ToString();
 
-        StreamWriter sw = new StreamWriter(fileName, false, Encoding.UTF8);
-        sw.Write(content);
-        sw.Flush();
-        sw.Dispose();
+
+        XmlWriterSettings settings = new XmlWriterSettings();
+        settings.Indent = true;
+        settings.ConformanceLevel = ConformanceLevel.Auto;
+        settings.IndentChars = "\t";
+        settings.OmitXmlDeclaration = false;
+
+        XmlWriter xw =XmlWriter.Create(fileName,settings);
+        
+        XmlDocument doc = new XmlDocument();
+        doc.LoadXml(content);
+        doc.WriteTo(xw);
+
+        xw.Flush();
+        xw.Close();
     }
 
     //加载图片

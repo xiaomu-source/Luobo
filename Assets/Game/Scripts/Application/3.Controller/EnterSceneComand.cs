@@ -23,9 +23,9 @@ class EnterSceneComand : Controller
                 RegisterView(GameObject.Find("UISelect").GetComponent<UISelect>());
                 break;
             case 3://Level
-                RegisterView(GameObject.Find("UIBoard").GetComponent<UIBoard>());
                 RegisterView(GameObject.Find("Map").GetComponent<Spawner>());
-                RegisterView(GameObject.Find("Canvas").transform.Find("UICountDown").GetComponent<UICountDown>());
+                RegisterView(GameObject.Find("TowerPopup").GetComponent<TowerPopup>());
+                RegisterView(GameObject.Find("Canvas").transform.Find("UIBoard").GetComponent<UIBoard>());
                 RegisterView(GameObject.Find("Canvas").transform.Find("UICountDown").GetComponent<UICountDown>());
                 RegisterView(GameObject.Find("Canvas").transform.Find("UIWin").GetComponent<UIWin>());
                 RegisterView(GameObject.Find("Canvas").transform.Find("UILost").GetComponent<UILost>());

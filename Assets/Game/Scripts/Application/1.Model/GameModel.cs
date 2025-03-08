@@ -22,11 +22,11 @@ public class GameModel : Model
     //当前游戏的关卡索引
     int m_PlayLevelIndex = -1;
 
-    //游戏当前分数
-    int m_score = 0;
+    //游戏当前金币
+    int m_gold = 0;
 
     //是否游戏中
-    bool m_isPlaying = false;
+    bool m_IsPlaying = false;
     #endregion
 
     #region 属性
@@ -35,10 +35,10 @@ public class GameModel : Model
         get { return Consts.M_GameModel; }
     }
 
-    public int Score
+    public int Gold
     {
-        get { return m_score; }
-        set { m_score = value; }
+        get { return m_gold; }
+        set { m_gold = value; }
     }
 
     public int LevelCount
@@ -58,8 +58,8 @@ public class GameModel : Model
 
     public bool IsPlaying
     {
-        get { return m_isPlaying; }
-        set { m_isPlaying = value; }
+        get { return m_IsPlaying; }
+        set { m_IsPlaying = value; }
     }
 
     public bool IsGamePassed
@@ -108,23 +108,28 @@ public class GameModel : Model
     public void StartLevel(int levelIndex)
     {
         m_PlayLevelIndex = levelIndex;
-        m_isPlaying = true;
     }
 
     //游戏结束
-    public void StopLevel(bool isWin)
+    public void EndLevel(bool isSuccess)
     {
-        if (isWin && PlayLevelIndex > GameProgress)
+        if (isSuccess && PlayLevelIndex > GameProgress)
         {
+            //重新获取
+            m_GameProgress = PlayLevelIndex;
+
+            //保存
             Saver.SetProgress(PlayLevelIndex);
         }
-        m_isPlaying = false;
+
+        //游戏停止状态
+        m_IsPlaying = false;
     }
 
     //清档
     public void ClearProgress()
     {
-        m_isPlaying = false;
+        m_IsPlaying = false;
         m_PlayLevelIndex = -1;
         m_GameProgress = -1;
         Saver.SetProgress(-1);
@@ -140,8 +145,4 @@ public class GameModel : Model
 
     #region 帮助方法
     #endregion
-
-
-
-    
 }

@@ -46,7 +46,7 @@ public class UIBoard : View
     public bool IsPlaying
     {
         get { return m_IsPlaying; }
-        set 
+        set
         {
             m_IsPlaying = value;
 
@@ -58,8 +58,8 @@ public class UIBoard : View
     public GameSpeed Speed
     {
         get { return m_Speed; }
-        set 
-        {     
+        set
+        {
             m_Speed = value;
 
             btnSpeed1.gameObject.SetActive(m_Speed == GameSpeed.One);
@@ -113,14 +113,12 @@ public class UIBoard : View
 
     public override void RegisterEvents()
     {
+
     }
 
     public override void HandleEvent(string eventName, object data)
     {
-        switch (eventName)
-        {
 
-        }
     }
     #endregion
 

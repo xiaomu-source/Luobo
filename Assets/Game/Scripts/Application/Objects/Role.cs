@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-abstract class Role : ReusbleObject, IReusable
+public abstract class Role : ReusbleObject, IReusable
 {
     #region 常量
-    
+
     #endregion
 
     #region 事件
@@ -16,8 +16,8 @@ abstract class Role : ReusbleObject, IReusable
     #endregion
 
     #region 字段
-    int m_Hp;
-    int m_MaxHp;
+    [SerializeField] int m_Hp;
+    [SerializeField] int m_MaxHp;
     #endregion
 
     #region 属性
@@ -41,8 +41,11 @@ abstract class Role : ReusbleObject, IReusable
                 HpChanged(m_Hp, m_MaxHp);
 
             //死亡事件
-            if (Dead != null)
-                Dead(this);
+            if (m_Hp == 0)
+            {
+                if (Dead != null)
+                    Dead(this);
+            }
         }
     }
 
@@ -51,7 +54,6 @@ abstract class Role : ReusbleObject, IReusable
         get { return m_MaxHp; }
         set
         {
-
             if (value < 0)
                 value = 0;
 
@@ -63,6 +65,13 @@ abstract class Role : ReusbleObject, IReusable
     {
         get { return m_Hp == 0; }
     }
+
+    public Vector3 Position
+    {
+        get { return transform.position; }
+        set { transform.position = value; }
+    }
+
     #endregion
 
     #region 方法
@@ -74,7 +83,7 @@ abstract class Role : ReusbleObject, IReusable
         Hp -= hit;
     }
 
-    protected virtual void Die(Role role)
+    protected virtual void OnDead(Role role)
     {
 
     }
@@ -84,21 +93,18 @@ abstract class Role : ReusbleObject, IReusable
     #endregion
 
     #region 事件回调
-    public  override void OnSpawn()
+    public override void OnSpawn()
     {
-        this.Dead += Die;
+        this.Dead += OnDead;
     }
 
     public override void OnUnspawn()
     {
-        Hp = 0;
-        MaxHp = 0;
+        HpChanged = null;
+        Dead = null;
 
-        while (HpChanged != null)
-            HpChanged -= HpChanged;
-
-        while (Dead != null)
-            Dead -= Dead;
+        m_Hp = 0;
+        m_MaxHp = 0;
     }
     #endregion
 

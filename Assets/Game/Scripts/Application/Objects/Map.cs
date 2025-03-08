@@ -16,14 +16,12 @@ public class TileClickEventArgs : EventArgs
     }
 }
 
-
-
 //用于描述一个关卡地图的状态
 public class Map : MonoBehaviour
 {
     #region 常量
-    public const int RowCount = 8;   //行数
-    public const int ColumnCount = 12; //列数
+    public const int RowCount 		= 8;  //行数
+    public const int ColumnCount 	= 12; //列数
     #endregion
 
     #region 事件
@@ -37,10 +35,10 @@ public class Map : MonoBehaviour
     float TileWidth;//格子宽
     float TileHeight;//格子高
 
+    Level m_level; //关卡数据
+
     List<Tile> m_grid = new List<Tile>(); //格子集合
     List<Tile> m_road = new List<Tile>(); //路径集合
-
-    Level m_level; //关卡数据
 
     public bool DrawGizmos = true; //是否绘制网格
     #endregion
@@ -68,6 +66,11 @@ public class Map : MonoBehaviour
             SpriteRenderer render = transform.Find("Road").GetComponent<SpriteRenderer>();
             StartCoroutine(Tools.LoadImage(value, render));
         }
+    }
+
+    public Rect MapRect
+    {
+        get { return new Rect(-MapWidth / 2, -MapHeight / 2, MapWidth, MapHeight); }
     }
 
     public List<Tile> Grid
@@ -181,9 +184,7 @@ public class Map : MonoBehaviour
                 //触发鼠标左键点击事件
                 TileClickEventArgs e = new TileClickEventArgs(0, t);
                 if (OnTileClick != null)
-                {
                     OnTileClick(this, e);
-                }
             }
         }
 
@@ -196,9 +197,7 @@ public class Map : MonoBehaviour
                 //触发鼠标右键点击事件
                 TileClickEventArgs e = new TileClickEventArgs(1, t);
                 if (OnTileClick != null)
-                {
                     OnTileClick(this, e);
-                }
             }
         }
     }
@@ -212,7 +211,7 @@ public class Map : MonoBehaviour
         //计算地图和格子大小
         CalculateSize();
 
-        //绘制格子
+        //格子颜色
         Gizmos.color = Color.green;
 
         //绘制行
@@ -231,7 +230,7 @@ public class Map : MonoBehaviour
             Gizmos.DrawLine(from, to);
         }
 
-
+        //绘制格子
         foreach (Tile t in m_grid)
         {
             if (t.CanHold)
@@ -270,6 +269,10 @@ public class Map : MonoBehaviour
     #region 事件回调
     void Map_OnTileClick(object sender, TileClickEventArgs e)
     {
+        //当前场景不是LevelBuilder不能编辑
+        if (gameObject.scene.name != "LevelBuilder")
+            return;
+
         if (Level == null)
             return;
 
@@ -300,15 +303,15 @@ public class Map : MonoBehaviour
         Vector3 p1 = Camera.main.ViewportToWorldPoint(leftDown);
         Vector3 p2 = Camera.main.ViewportToWorldPoint(rightUp);
 
-        MapWidth = (p2.x - p1.x);
-        MapHeight = (p2.y - p1.y);
+        MapWidth = Math.Abs(p2.x - p1.x);
+        MapHeight = Math.Abs(p2.y - p1.y);
 
         TileWidth = MapWidth / ColumnCount;
         TileHeight = MapHeight / RowCount;
     }
 
     //获取格子中心点所在的世界坐标
-    Vector3 GetPosition(Tile t)
+    public Vector3 GetPosition(Tile t)
     {
         return new Vector3(
                 -MapWidth / 2 + (t.X + 0.5f) * TileWidth,
@@ -318,23 +321,27 @@ public class Map : MonoBehaviour
     }
 
     //根据格子索引号获得格子
-    Tile GetTile(int tileX, int tileY)
+    public Tile GetTile(int tileX, int tileY)
     {
         int index = tileX + tileY * ColumnCount;
-
         if (index < 0 || index >= m_grid.Count)
-            return null;
-
+            throw new IndexOutOfRangeException("格子索引越界");
         return m_grid[index];
+    }
+
+    //获取所在位置获得格子
+    public Tile GetTile(Vector3 position)
+    {
+        int tileX = (int)((position.x + MapWidth / 2) / TileWidth);
+        int tileY = (int)((position.y + MapHeight / 2) / TileHeight);
+        return GetTile(tileX, tileY);
     }
 
     //获取鼠标下面的格子
     Tile GetTileUnderMouse()
     {
         Vector2 wordPos = GetWorldPosition();
-        int col = (int)((wordPos.x + MapWidth / 2) / TileWidth);
-        int row = (int)((wordPos.y + MapHeight / 2) / TileHeight);
-        return GetTile(col, row);
+        return GetTile(wordPos);
     }
 
     //获取鼠标所在位置的世界坐标

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-class Monster : Role
+public class Monster : Role
 {
     #region 常量
     public const float CLOSED_DISTANCE = 0.1f;
@@ -16,9 +16,9 @@ class Monster : Role
 
     #region 字段
     public MonsterType MonsterType = MonsterType.Monster0;//怪物类型
-    float m_MoveSpeed;//移动速度（米）
+    float m_MoveSpeed;//移动速度（米/秒）
     Vector3[] m_Path = null; //路径拐点
-    int m_PointIndex = -1; //下一拐点索引
+    int m_PointIndex = -1; //当前拐点索引
     bool m_IsReached = false;//是否到达终点
     #endregion
 
@@ -54,13 +54,13 @@ class Monster : Role
 
         if (m_PointIndex == -1)
         {
-            //起点位置
+            //刚刚出来，那就放置到起点位置
             m_PointIndex = 0;
             MoveTo(m_Path[m_PointIndex]);
         }
         else
         {
-            //下一点的位置
+            //不然就指定下一个目标位置
             m_PointIndex++;
         }
     }
@@ -80,7 +80,7 @@ class Monster : Role
         //计算距离
         float dis = Vector3.Distance(pos, dest);
 
-        if (dis < CLOSED_DISTANCE)
+        if (dis <= CLOSED_DISTANCE)
         {
             //到达拐点
             MoveTo(dest);
@@ -102,7 +102,7 @@ class Monster : Role
             //移动的单位方向
             Vector3 direction = (dest - pos).normalized;
 
-            //进行帧移动(米/帧 =  米/秒  * Time.deltaTime)
+            //帧移动(米/帧 =  米/秒  * Time.deltaTime)
             transform.Translate(direction * m_MoveSpeed * Time.deltaTime);
         }
     }
@@ -123,10 +123,11 @@ class Monster : Role
     {
         base.OnUnspawn();
 
-        while (Reached != null)
-            Reached -= Reached;
-
-        this.MoveSpeed = 0;
+        this.m_Path = null;
+        this.m_PointIndex = -1;
+        this.m_IsReached = false;
+        this.m_MoveSpeed = 0;
+        this.Reached = null;
     }
     #endregion
 

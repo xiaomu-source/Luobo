@@ -63,8 +63,6 @@ public class MapEditor : Editor
             EditorUtility.SetDirty(target);
     }
 
-
-
     void LoadLevelFiles()
     {
         //清除状态

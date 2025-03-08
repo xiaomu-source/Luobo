@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-class SpawnMonsterArgs
+public class SpawnMonsterArgs
 {
-    public int MonsterType;
+    public int MonsterID;
 }

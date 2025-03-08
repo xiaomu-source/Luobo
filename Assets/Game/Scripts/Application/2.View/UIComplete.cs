@@ -47,7 +47,8 @@ public class UIComplete : View
 
     public void OnClearClick()
     {
-
+        GameModel gm = GetModel<GameModel>();
+        gm.ClearProgress();
     }
     #endregion
 
